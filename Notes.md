@@ -1,26 +1,60 @@
-# Notes on the architecture and orchestration (the job-monitor project in Airflow and Atro CLI)
+# Notes on Architecture and Orchestration (Job Monitor with Airflow & Astro CLI)
 
-# 1. Contest
-it is a project to demonstrate myself the utility of orchestration and why is the required standard in data engineering. It is to understand the reason behind orchestrating tasks instead of stacking them in sequence. 
+## 1. Context
+This project demonstrates the practical utility of orchestration and why it is the industry standard in Data Engineering. The goal is to understand the core architectural advantages of orchestrating tasks instead of chaining custom scripts in sequence.
 
-In this project we will try to get familiar with the concepts of scheduling, indempodency, deduplication, alerting and containeirisation.
+In this project, I explore fundamental concepts:
+- **Scheduling & Triggering**
+- **Idempotency & Deduplication**
+- **Alerting & Failure Management**
+- **Containerization (Docker / Astro CLI)**
 
-The project is structured to be a simple job-monitor but trying to touch in all the spects of modern orchestration.
+The target system is a lightweight **Job Monitor** that polls public ATS endpoints (Ashby, Lever, Greenhouse) daily, computes the diff against historical data, and sends alerts for new job posts.
 
-the questions I will try to answer:
+---
 
-- my old master process was generating a work list, what is the equivalent in Airflow?
-- the restarting way I designed in my old project, what will it be in Airflow? what I should assure in Airflow to restart and relaunch a task safely?
-- MY explicit report of failures where it lives in Airflow?
-- what does it mean that a DAG is idempodent and my old process was idempodent?
-- what does it mean backfill and how did I do it in the old process?
+## 2. Parallelism: Previous NTM Project (Bluesky) vs. Airflow
 
+### The NTM System (Past)
+- **Monitoring:** A `monitor.sh` script continuously checked input folders. When new flight tiles were uploaded, a `diff` command detected unprocessed tiles.
+- **Task Generation:** A master Bash script generated a list of parameterized command-line calls. Each line invoked a script processing a single tile (creating a `.vrt` with adjacent buffer tiles, reprojecting, resampling, and masking).
+- **State Tracking:** Checked directly on the filesystem based on output files presence.
+- **Technology Stack:** Pure Bash/Shell scripts. While functional for local execution, relying solely on Bash for pipeline orchestration leads to fragile error handling, lack of centralized visibility, and maintenance bottlenecks.
 
-# 2. the parallel with my previous NTM project in Bluesky
-* in the old system, the NTM process in bluesky had a monitor.sh script "master" that was monitoring specific folders. When a user wanted to process a new flight , it had to load the tiles in specific input folders. when the monitor script noticed through a diff cat command that the folder contained not processed tiles, it would start the NTM Process by calling a bash script that generated a work list. each command line was a separte bash script call for a single tile. the single tile command was then called to create a .vrt file with adjacent tiles (a buffer in order not to create a cutline in the final product), reprojecting, resampling, masking etc.
-** in Airflow ...
+### The Job Monitor in Airflow (Present)
+- **Data Ingestion:** We poll target ATS endpoints (e.g., Ashby's public REST API at `https://api.ashbyhq.com/posting-api/job-board/<company>`) using Python `requests`.
+- **Payload Structure:** The response is a JSON payload. We extract the list of jobs from the `jobs` key.
+- **Identification & Diffing:** Each job contains a unique `id` (e.g., UUID string). New job postings are identified by computing the set difference between today's IDs and yesterday's stored IDs:
+  `new_jobs = set(today_ids) - set(yesterday_ids)`
+- **Technology Stack:** Python & Apache Airflow. Python is the industry standard for modern data orchestration because it provides native data structures (`set`, `dict`), robust networking libraries (`requests`), and seamless integration with Airflow's scheduling, retry mechanisms, and observability features.
 
-# 3. Architecture questions: why and how?
+---
 
-# 4. the advantages of orchestration
+## 3. Architecture Questions: Why and How?
+
+### Q1: What is the equivalent of the old master process in Airflow?
+In Airflow, the master process is represented by the **DAG definition file** combined with **Dynamic Task Mapping** (`.expand()`). Instead of running a loop inside a single Bash script, Airflow dynamically instantiates independent Task Instances for each parameter (e.g., one task per target company or job board).
+
+### Q2: How does restarting work in Airflow, and what makes a task safe to re-run?
+Airflow provides native **Retries** and manual **Clear Task** operations via its Web UI. 
+To make a re-run safe, the task must be **idempotent**. This means that executing the task once or multiple times with the same input produces the exact same side-effects (e.g., updating a database using `UPSERT` instead of `INSERT`, or ensuring email alerts are only sent for unnotified IDs).
+
+### Q3: Where does explicit reporting of failures live?
+In Airflow, failure reporting is handled at three levels:
+1. **Visual UI:** Task instances turn red (`FAILED`) on the Grid and Graph views.
+2. **Centralized Logging:** Detailed logs per task instance are accessible directly from the UI.
+3. **Alerting Callbacks:** Native hooks like `on_failure_callback` can automatically trigger notifications (Slack, Email, PagerDuty).
+
+### Q4: What does Idempotency mean, and was the old system idempotent?
+- **Definition:** An operation is idempotent if running it multiple times with the same parameters yields the exact same result without unintended side-effects.
+- **Comparison:** The old NTM script was partially idempotent if it checked for existing output files before processing. However, if interrupted mid-execution, it could leave partially processed `.vrt` or temporary files. In Airflow, tasks should be designed to clean up or overwrite their state cleanly on execution.
+
+### Q5: What is Backfill, and how was it done manually vs. in Airflow?
+- **Definition:** Backfill is the process of running a pipeline retroactively for past historical execution dates.
+- **Old Way:** Manually looping over historical dates via terminal CLI parameters (e.g., `for date in dates; do ./script.sh $date; done`).
+- **Airflow Way:** Airflow natively tracks the `logical_date` (or `execution_date`). You can trigger historical backfills natively via the CLI (`astro dev run dags backfill`) or UI, isolated by date context.
+
+## 3. Architecture questions: why and how?
+
+## 4. the advantages of orchestration
 
