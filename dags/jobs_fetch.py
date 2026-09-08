@@ -4,26 +4,23 @@ import requests
 import time
 from pendulum import datetime
 from airflow.sdk import dag, task
+from include.source_config import load_config
+from include.sources import PARSERS
+import sys
 
 @task
-def fetch_jobs():
+def fetch_jobs(source: str = "example_source"):
+
+    # 1. Fetch jobs from the API
+    parser = PARSERS[source["ats"]] 
+    response = requests.get(source["api_url"], headers=source.get("headers", {}))
     today_timestamp = time.strftime("%Y-%m-%d", time.localtime())
     folder_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "include/jobs")
     os.makedirs(folder_path, exist_ok=True)
-    file_path = os.path.join(folder_path, f"new_jobs_{today_timestamp}.json")
-    state_file_path = os.path.join(folder_path, "state.json")
-
-
-
-    # 1. Fetch current jobs from REST API
-    url = "https://api.ashbyhq.com/posting-api/job-board/mapbox"
-    response = requests.get(url)
-    response.raise_for_status()
-
-    data = response.json()
-    if "jobs" not in data:
-        raise Exception(f"Unexpected response from API: {data}")
-    fetched_jobs = data.get("jobs", [])
+    file_path = os.path.join(folder_path, f"new_jobs_{source['ats']}_{today_timestamp}.json")
+    state_file_path = os.path.join(folder_path, f"state_{source['ats']}.json")
+    response.raise_for_status()    
+    cleaned_data = parser(response, source)
 
     # 2. Safely read previous state using json
     if os.path.exists(state_file_path):
@@ -36,9 +33,9 @@ def fetch_jobs():
     existing_ids = {j["id"] for j in existing_jobs}
 
     # 4. Identify new jobs using sets
-    new_jobs = [job for job in fetched_jobs if job["id"] not in existing_ids]
+    new_jobs = [job for job in cleaned_data if job["id"] not in existing_ids]
 
-    print(f"Total jobs fetched today: {len(fetched_jobs)}")
+    print(f"Total jobs fetched today: {len(cleaned_data)}")
     print(f"New jobs detected: {len(new_jobs)}")
 
     # 5. Update state and write clean JSON to disk
@@ -52,7 +49,7 @@ def fetch_jobs():
 
     # update the state file with the latest jobs
     with open(state_file_path, "w", encoding="utf-8") as f:
-        json.dump(fetched_jobs, f, indent=2)
+        json.dump(cleaned_data, f, indent=2)
 
     return new_jobs
 
@@ -65,7 +62,8 @@ def fetch_jobs():
     tags=["example"],
 )
 def fetch_jobs_dag():
-    new_jobs = fetch_jobs()
+    sources = load_config()
+    fetch_jobs.expand(source=sources)
     # You can add more tasks here to process new_jobs if needed
 
 fetch_jobs_dag = fetch_jobs_dag()
