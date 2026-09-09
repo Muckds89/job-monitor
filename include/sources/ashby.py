@@ -1,6 +1,5 @@
 # include/sources/ashby.py
 
-import sys
 import os
 import json
 import time
@@ -25,9 +24,9 @@ def parse(response, source):
     # retrieve the ats from the source configuration
 
     data = response.json()
-    if source not in data:
+    if "jobs" not in data:
         raise Exception(f"Unexpected response from API: {data}")
-    fetched_jobs = data.get(source, [])
+    fetched_jobs = data.get("jobs", [])
 
     # normalize the data into a list of dictionaries with the required fields
     cleaned_data = []
@@ -35,8 +34,8 @@ def parse(response, source):
         cleaned_job = {
             "id": job.get("id"),
             "title": job.get("title"),
-            "url": job.get("url"),
-            "location": job.get("location", {}).get("name", "Unknown Location")
+            "url": job.get("jobUrl"),
+            "location": job.get("location")
         }
         cleaned_data.append(cleaned_job)
 

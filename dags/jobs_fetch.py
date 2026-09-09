@@ -6,7 +6,6 @@ from pendulum import datetime
 from airflow.sdk import dag, task
 from include.source_config import load_config
 from include.sources import PARSERS
-import sys
 
 @task
 def fetch_jobs(source: str = "example_source"):
@@ -14,12 +13,12 @@ def fetch_jobs(source: str = "example_source"):
     # 1. Fetch jobs from the API
     parser = PARSERS[source["ats"]] 
     response = requests.get(source["api_url"], headers=source.get("headers", {}))
+    response.raise_for_status()    
     today_timestamp = time.strftime("%Y-%m-%d", time.localtime())
     folder_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "include/jobs")
     os.makedirs(folder_path, exist_ok=True)
-    file_path = os.path.join(folder_path, f"new_jobs_{source['ats']}_{today_timestamp}.json")
-    state_file_path = os.path.join(folder_path, f"state_{source['ats']}.json")
-    response.raise_for_status()    
+    file_path = os.path.join(folder_path, f"new_jobs_{source['company']}_{today_timestamp}.json")
+    state_file_path = os.path.join(folder_path, f"state_{source['company']}.json")
     cleaned_data = parser(response, source)
 
     # 2. Safely read previous state using json
@@ -40,9 +39,8 @@ def fetch_jobs(source: str = "example_source"):
 
     # 5. Update state and write clean JSON to disk
     if new_jobs:
-        updated_jobs = existing_jobs + new_jobs
         with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(updated_jobs, f, indent=2)
+            json.dump(new_jobs, f, indent=2)
         print(f"Saved {len(new_jobs)} new jobs to {file_path}")
     else:
         print("No new jobs found.")
