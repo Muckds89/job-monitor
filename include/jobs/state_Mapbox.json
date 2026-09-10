@@ -37,7 +37,7 @@
   },
   {
     "id": "84cbaa7f-f4a0-4a84-8cfb-f7b6fa2ab116",
-    "title": "Senior Software Engineer, Routing Engine (Rust)",
+    "title": "Software Development Engineer II, Routing Engine (Rust)",
     "url": "https://jobs.ashbyhq.com/mapbox/84cbaa7f-f4a0-4a84-8cfb-f7b6fa2ab116",
     "location": "Mapbox US"
   },
@@ -294,9 +294,15 @@
     "location": "Mapbox Germany"
   },
   {
-    "id": "e6a07447-be6f-4456-9eb8-accf279b914e",
-    "title": "RAVE I, Data Enrichment",
-    "url": "https://jobs.ashbyhq.com/mapbox/e6a07447-be6f-4456-9eb8-accf279b914e",
+    "id": "e49bbda4-489b-46a4-95b1-f90b78631690",
+    "title": "RAVE I, Map Quality & Insights",
+    "url": "https://jobs.ashbyhq.com/mapbox/e49bbda4-489b-46a4-95b1-f90b78631690",
+    "location": "Mapbox Minsk"
+  },
+  {
+    "id": "f63b6448-c6c9-4928-98c3-c7336e494c44",
+    "title": "RAVE I (24/7), Feedback and Corrections (Road Closures)",
+    "url": "https://jobs.ashbyhq.com/mapbox/f63b6448-c6c9-4928-98c3-c7336e494c44",
     "location": "Mapbox Minsk"
   },
   {

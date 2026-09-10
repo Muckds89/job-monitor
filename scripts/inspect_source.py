@@ -1,5 +1,8 @@
 import requests
 import urllib
+import sys
+url_ = sys.argv[1]
+url_ = urllib.parse.unquote(url_)
 
 # get key value and key type of a json response from a url
 def get_json_response(url):
@@ -16,6 +19,8 @@ def get_json_response(url):
                     for sub_key, sub_value in item.items():
                         name_value_dict[sub_key] = type(sub_value)
                 name_value_dict[key] = type(json_data[key])
+        print(f"List fields: {list_field}")
+        print(f"Name-value fields: {name_value_dict}")
         return list_field, name_value_dict
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data from {url}: {e}")
@@ -24,3 +29,4 @@ def get_json_response(url):
         print(f"Error parsing JSON from {url}: {e}")
         return None, None
 
+get_json_response(url_)
