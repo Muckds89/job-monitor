@@ -1,5 +1,6 @@
 from urllib.parse import urlparse, urlunparse
 import posixpath
+from include.inspect_values import  join_present
 def parse(response, source):
     """
     response: the object returned by requests.get(url) for this source
@@ -22,11 +23,13 @@ def parse(response, source):
     # normalize the data into a list of dictionaries with the required fields
     cleaned_data = []
     for result in fetched_result:
+        loc = result.get("location") or {}
+        ats_loc = result.get("atsLocation") or {}
         cleaned_result = {
             "id": result.get("id"),
             "title": result.get("jobOpeningName"),
             "url": urlunparse(urlparse(source["api_url"])._replace(path=posixpath.join(posixpath.split(urlparse(source["api_url"]).path)[0], str(result.get("id"))))),
-            "location": result.get("location")
+            "location": join_present(loc.get("city"), loc.get("state"), ats_loc.get("city"), ats_loc.get("province"), ats_loc.get("country")),
         }
         cleaned_data.append(cleaned_result)
 

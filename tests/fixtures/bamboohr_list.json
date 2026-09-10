@@ -1,0 +1,147 @@
+{
+  "meta": {
+    "totalCount": 7
+  },
+  "result": [
+    {
+      "id": "389",
+      "jobOpeningName": "Sales Engineer",
+      "departmentId": "18687",
+      "departmentLabel": "Pre-Sales",
+      "employmentStatusLabel": "Full-Time",
+      "employmentType": null,
+      "location": {
+        "city": "Frankfurt am Main",
+        "state": "Hesse"
+      },
+      "atsLocation": {
+        "country": null,
+        "state": null,
+        "province": null,
+        "city": null
+      },
+      "isRemote": null,
+      "locationType": "2"
+    },
+    {
+      "id": "393",
+      "jobOpeningName": "Director of Strategic Finance & FP&A",
+      "departmentId": "18658",
+      "departmentLabel": "Finance",
+      "employmentStatusLabel": "Full-Time",
+      "employmentType": null,
+      "location": {
+        "city": "Cambridge",
+        "state": "Cambridgeshire"
+      },
+      "atsLocation": {
+        "country": null,
+        "state": null,
+        "province": null,
+        "city": null
+      },
+      "isRemote": null,
+      "locationType": "2"
+    },
+    {
+      "id": "396",
+      "jobOpeningName": "Business Analyst (French Speaking) ",
+      "departmentId": "18666",
+      "departmentLabel": "Delivery",
+      "employmentStatusLabel": "Full-Time",
+      "employmentType": null,
+      "location": {
+        "city": "Paris",
+        "state": "Île-de-France"
+      },
+      "atsLocation": {
+        "country": null,
+        "state": null,
+        "province": null,
+        "city": null
+      },
+      "isRemote": null,
+      "locationType": "2"
+    },
+    {
+      "id": "397",
+      "jobOpeningName": "Business Analyst (French Speaking) ",
+      "departmentId": "18666",
+      "departmentLabel": "Delivery",
+      "employmentStatusLabel": "Full-Time",
+      "employmentType": null,
+      "location": {
+        "city": "Cambridge",
+        "state": "Cambridgeshire"
+      },
+      "atsLocation": {
+        "country": null,
+        "state": null,
+        "province": null,
+        "city": null
+      },
+      "isRemote": null,
+      "locationType": "2"
+    },
+    {
+      "id": "398",
+      "jobOpeningName": "Project Manager (AI Implementation)",
+      "departmentId": "18666",
+      "departmentLabel": "Delivery",
+      "employmentStatusLabel": "Full-Time",
+      "employmentType": null,
+      "location": {
+        "city": "Paris",
+        "state": "Île-de-France"
+      },
+      "atsLocation": {
+        "country": null,
+        "state": null,
+        "province": null,
+        "city": null
+      },
+      "isRemote": null,
+      "locationType": "2"
+    },
+    {
+      "id": "424",
+      "jobOpeningName": "Technical Support Engineer",
+      "departmentId": "18656",
+      "departmentLabel": "Support",
+      "employmentStatusLabel": "Full-Time",
+      "employmentType": null,
+      "location": {
+        "city": null,
+        "state": null
+      },
+      "atsLocation": {
+        "country": "Japan",
+        "state": null,
+        "province": null,
+        "city": null
+      },
+      "isRemote": null,
+      "locationType": "1"
+    },
+    {
+      "id": "425",
+      "jobOpeningName": "Sales Engineer",
+      "departmentId": "18687",
+      "departmentLabel": "Pre-Sales",
+      "employmentStatusLabel": "Full-Time",
+      "employmentType": null,
+      "location": {
+        "city": null,
+        "state": null
+      },
+      "atsLocation": {
+        "country": "Spain",
+        "state": null,
+        "province": null,
+        "city": null
+      },
+      "isRemote": null,
+      "locationType": "1"
+    }
+  ]
+}

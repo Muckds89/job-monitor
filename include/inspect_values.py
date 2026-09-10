@@ -1,8 +1,4 @@
-def inspect_value(*args):
-    """
-    Inspect some values candidates to evaluate their type and check which count as present or missing. This function is useful for debugging and understanding the data structure of the values being passed in.
-    """
-    
+
 def is_present(value):
     """
     define a function that decides if a value is present or missing
@@ -19,13 +15,12 @@ def is_present(value):
         return False
     return True
 
-def coalesce_values(*args):
+def join_present(*args):
     """
     define a function that takes multiple values and coalasce them into a concatenated string
     """
-    result = ""
+    result = []
     for value in args:
         if is_present(value):
-            result += str(value)
-            result += "_"
-    return result.rstrip("_")
+            result.append(str(value))
+    return ", ".join(result)
