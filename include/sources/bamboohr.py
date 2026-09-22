@@ -26,7 +26,7 @@ def parse(response, source):
         loc = result.get("location") or {}
         ats_loc = result.get("atsLocation") or {}
         cleaned_result = {
-            "id": result.get("id"),
+            "id": str(result.get("id")),
             "title": result.get("jobOpeningName"),
             "url": urlunparse(urlparse(source["api_url"])._replace(path=posixpath.join(posixpath.split(urlparse(source["api_url"]).path)[0], str(result.get("id"))))),
             "location": join_present(loc.get("city"), loc.get("state"), ats_loc.get("city"), ats_loc.get("province"), ats_loc.get("country")),

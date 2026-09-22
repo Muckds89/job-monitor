@@ -15,9 +15,9 @@ def is_present(value):
         return False
     return True
 
-def join_present(*args):
+def join_present(*args, sep=", ", predicate=is_present):
     """
-    define a function that takes multiple values and coalasce them into a concatenated string
+    concatenates the values that is_present considers present, separated by sep
     """
     result = []
     for value in args:

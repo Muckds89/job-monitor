@@ -1,4 +1,3 @@
-import json
 import os
 import requests
 import time
@@ -6,9 +5,10 @@ from pendulum import datetime
 from airflow.sdk import dag, task
 from include.source_config import load_config
 from include.sources import PARSERS
+from include.state import read_state_file, compare_new_jobs, write_json 
 
 @task
-def fetch_jobs(source: str = "example_source"):
+def fetch_jobs(source):
 
     # 1. Fetch jobs from the API
     parser = PARSERS[source["ats"]] 
@@ -22,32 +22,22 @@ def fetch_jobs(source: str = "example_source"):
     cleaned_data = parser(response, source)
 
     # 2. Safely read previous state using json
-    if os.path.exists(state_file_path):
-        with open(state_file_path, "r", encoding="utf-8") as f:
-            existing_jobs = json.load(f)
-    else:
-        existing_jobs = []
+    existing_jobs = read_state_file(state_file_path)
 
-    # 3. Create set of existing IDs for fast O(1) deduplication
-    existing_ids = {j["id"] for j in existing_jobs}
-
-    # 4. Identify new jobs using sets
-    new_jobs = [job for job in cleaned_data if job["id"] not in existing_ids]
+    # 3. Identify new jobs using sets
+    new_jobs = compare_new_jobs(existing_jobs,cleaned_data)
 
     print(f"Total jobs fetched today: {len(cleaned_data)}")
     print(f"New jobs detected: {len(new_jobs)}")
 
-    # 5. Update state and write clean JSON to disk
-    if new_jobs:
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(new_jobs, f, indent=2)
-        print(f"Saved {len(new_jobs)} new jobs to {file_path}")
-    else:
+    # 4. Update report for new jobsS and write clean JSON to disk
+    if not new_jobs:
         print("No new jobs found.")
+    # write the new_jobs file report
+    write_json(file_path,new_jobs)
 
-    # update the state file with the latest jobs
-    with open(state_file_path, "w", encoding="utf-8") as f:
-        json.dump(cleaned_data, f, indent=2)
+    # 5. update the state file with the latest jobs
+    write_json(state_file_path,cleaned_data)
 
     return new_jobs
 

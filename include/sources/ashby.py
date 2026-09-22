@@ -13,13 +13,13 @@ def parse(response, source):
     Returns: a list of dictionaries in the normalized format,
              i.e., id, title, url, location.
 
-    
-    Qui dentro decidi tu:
-      - dove sta la lista nella risposta, e cosa fai se non c'e'
-      - come si chiamano i campi in questa sorgente
-      - come costruisci l'url se la sorgente non te lo da'
-      - come appiattisci la sede quando e' annidata o sporca
-    """
+    Inside this function, you can decide:
+        - where the list of jobs is located in the response, and what to do if it's not present
+        - what the field names are in this source
+        - how to construct the URL if the source doesn't provide it
+        - how to flatten the location if it's nested or messy
+
+     """
 
     # retrieve the ats from the source configuration
 
@@ -32,7 +32,7 @@ def parse(response, source):
     cleaned_data = []
     for job in fetched_jobs:
         cleaned_job = {
-            "id": job.get("id"),
+            "id": str(job.get("id")),
             "title": job.get("title"),
             "url": job.get("jobUrl"),
             "location": job.get("location")
