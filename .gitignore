@@ -16,3 +16,9 @@ airflow.db
 
 **/.astro/dbt_metadata.json
 **/.astro/manifest.slim.json
+.venv
+./include/jobs/*
+./tests/fetch
+.pytest_cache
+scripts/.pytest_cache/
+
