@@ -14,8 +14,6 @@ def load_config():
     for company in companies:
         if "api_url" not in company:
             raise ValueError(f"Missing 'api_url' in company config: {company}")
-        if "state_file" not in company:
-            raise ValueError(f"Missing 'state_file' in company config: {company}")
         if "ats" not in company:
             raise ValueError(f"Missing 'ats' in company config: {company}")
 
