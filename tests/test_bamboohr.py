@@ -1,7 +1,6 @@
 import pytest
 from include.sources.bamboohr import parse
 import os
-import json
 
 fixture_file_path = os.path.join(os.path.dirname(__file__), "fixtures", "bamboohr_list.json")
 
