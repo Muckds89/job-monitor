@@ -26,13 +26,15 @@ flowchart LR
     A[config.json] --> B[DAG]
     B --> C[task per source]
     C --> D[ATS adapter data normalisation]
-    D --> E[diff new and previous jobs, new job report]
+    D --> E[(state)]
+    E --> F[diff]
+    F --> G[report]
 ```
 ## Overview
-- config.json is a list of dictionary, each dictionary contains a company info (company name, ats type, ats url)
-- Airflow dinamically istantiates independend Task Insytances for each parameter (one per company) through the the **DAG definition file** combined with **Dynamic Task Mapping** (`.expand()`)
-- Each ATS has calls its one specific ATS adapter to normalise the data
-- A diff operation is performed to retrieve the job not present in the previous run, and a report is created if any new job is founds 
+- config.json is a list of dictionaries, each dictionary contains a company info (company name, ats type, ats url)
+- Airflow dynamically instantiates independent Task Instances for each parameter (one per company) through the **DAG definition file** combined with **Dynamic Task Mapping** (`.expand()`)
+- Each ATS calls its own specific ATS adapter to normalise the data
+- A diff operation is performed to retrieve the job not present in the previous run, and a report is created regardless 
 
 
 # Project structure
