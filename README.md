@@ -34,7 +34,6 @@ flowchart LR
 - Each ATS has calls its one specific ATS adapter to normalise the data
 - A diff operation is performed to retrieve the job not present in the previous run, and a report is created if any new job is founds 
 
-```
 
 # Project structure
 
