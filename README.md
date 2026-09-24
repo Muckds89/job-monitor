@@ -6,7 +6,7 @@ Scheduled Airflow pipeline that polls applicant tracking system APIs and reports
 
 # Domain
 
-**ATS** ATS stands for Application Tracking System, a service widely use today to manage, process and aquire applications for job posts
+**ATS** - ATS stands for Application Tracking System, a service widely use today to manage, process and aquire applications for job posts
 
 # Tech Stack
 
@@ -15,8 +15,16 @@ Scheduled Airflow pipeline that polls applicant tracking system APIs and reports
 - **Docker**
 - **Python**
 
+More Info at (https://github.com/Muckds89/job-monitor/Notes.md)
+
 
 # How it works
+
+```mermaid
+`flowchart LR` config.json is a list of dictionary, each dictionary contains a company info (company name, ats type, ats url)
+`flowchart LR`
+
+```
 
 # Project structure
 
@@ -33,7 +41,7 @@ python -m pytest --ignore=tests/dags
 
 # Adding a source
 
-- ***First step** in include/config.json append a new company dictionary to the "companies" list of dictionaries, for example:
+- **First step** in include/config.json append a new company dictionary to the "companies" list of dictionaries, for example:
 ```json
  {
     "company": "IQGeo",
