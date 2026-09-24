@@ -1,45 +1,53 @@
-Overview
-========
+[![CI](https://github.com/Muckds89/job-monitor/actions/workflows/tests.yml/badge.svg)](https://github.com/Muckds89/job-monitor/actions/workflows/tests.yml) 
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
+# Overview
 
-Project Contents
-================
+Scheduled Airflow pipeline that polls applicant tracking system APIs and reports new job postings
 
-Your Astro project contains the following files and folders:
+# Domain
 
-- dags: This folder contains the Python files for your Airflow DAGs. By default, this directory includes one example DAG:
-    - `example_astronauts`: This DAG shows a simple ETL pipeline example that queries the list of astronauts currently in space from the Open Notify API and prints a statement for each astronaut. The DAG uses the TaskFlow API to define tasks in Python, and dynamic task mapping to dynamically print a statement for each astronaut. For more on how this DAG works, see our [Getting started tutorial](https://www.astronomer.io/docs/learn/get-started-with-airflow).
-- Dockerfile: This file contains a versioned Astro Runtime Docker image that provides a differentiated Airflow experience. If you want to execute other commands or overrides at runtime, specify them here.
-- include: This folder contains any additional files that you want to include as part of your project. It is empty by default.
-- packages.txt: Install OS-level packages needed for your project by adding them to this file. It is empty by default.
-- requirements.txt: Install Python packages needed for your project by adding them to this file. It is empty by default.
-- plugins: Add custom or community plugins for your project to this file. It is empty by default.
-- airflow_settings.yaml: Use this local-only file to specify Airflow Connections, Variables, and Pools instead of entering them in the Airflow UI as you develop DAGs in this project.
+**ATS** ATS stands for Application Tracking System, a service widely use today to manage, process and aquire applications for job posts
 
-Deploy Your Project Locally
-===========================
+# Tech Stack
 
-Start Airflow on your local machine by running 'astro dev start'.
+- **Airflow** a pipeline orchestration stack which allows to monitor, concatenate and organise tasks (DAGS) in a orderly manner thanks to a master process represanted by the **DAG definition file** combined with **Dynamic Task Mapping** (`.expand()`).
+- **ASTRO CLI**
+- **Docker**
+- **Python**
 
-This command will spin up five Docker containers on your machine, each for a different Airflow component:
 
-- Postgres: Airflow's Metadata Database
-- Scheduler: The Airflow component responsible for monitoring and triggering tasks
-- DAG Processor: The Airflow component responsible for parsing DAGs
-- API Server: The Airflow component responsible for serving the Airflow UI and API
-- Triggerer: The Airflow component responsible for triggering deferred tasks
+# How it works
 
-When all five containers are ready the command will open the browser to the Airflow UI at http://localhost:8080/. You should also be able to access your Postgres Database at 'localhost:5432/postgres' with username 'postgres' and password 'postgres'.
+# Project structure
 
-Note: If you already have either of the above ports allocated, you can either [stop your existing Docker containers or change the port](https://www.astronomer.io/docs/astro/cli/troubleshoot-locally#ports-are-not-available-for-my-local-airflow-webserver).
+# Run it locally
 
-Deploy Your Project to Astronomer
-=================================
+# Run the tests
 
-If you have an Astronomer account, pushing code to a Deployment on Astronomer is simple. For deploying instructions, refer to Astronomer documentation: https://www.astronomer.io/docs/astro/deploy-code/
+## Install only development dependencies (without airflow)
 
-Contact
-=======
+```bash
+pip install -r requirements-dev.txt
+python -m pytest --ignore=tests/dags
+```
 
-The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support.
+# Adding a source
+
+- ***First step** in include/config.json append a new company dictionary to the "companies" list of dictionaries, for example:
+```json
+ {
+    "company": "IQGeo",
+    "api_url": "https://iqgeo.bamboohr.com/careers/list",
+    "ats": "bamboohr"
+}
+```
+- **Second step** build an adapter .py file to normalise the response from the ATS in include/sources
+
+- **Third step** write a test in tests/ and test it with pytest manually. Also ther eis an automated CI workflow that triggers for every push/pull_request.
+
+# Design decisions
+
+
+# Status/ Next steps
+
+In progress
