@@ -20,9 +20,19 @@ More Info at (https://github.com/Muckds89/job-monitor/Notes.md)
 
 # How it works
 
+## Diagram
 ```mermaid
-`flowchart LR` config.json is a list of dictionary, each dictionary contains a company info (company name, ats type, ats url)
-`flowchart LR`
+flowchart LR
+    A[config.json] --> B[DAG]
+    B --> C[task per source]
+    C --> D[ATS adapter data normalisation]
+    D --> E[diff new and previous jobs, new job report]
+```
+## Overview
+- config.json is a list of dictionary, each dictionary contains a company info (company name, ats type, ats url)
+- Airflow dinamically istantiates independend Task Insytances for each parameter (one per company) through the the **DAG definition file** combined with **Dynamic Task Mapping** (`.expand()`)
+- Each ATS has calls its one specific ATS adapter to normalise the data
+- A diff operation is performed to retrieve the job not present in the previous run, and a report is created if any new job is founds 
 
 ```
 
